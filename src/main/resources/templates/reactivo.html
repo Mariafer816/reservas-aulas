@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programación reactiva | Sistema de Reservas</title>
+    <link rel="stylesheet" th:href="@{/css/mejoras.css}">
+    <link rel="stylesheet" th:href="@{/css/listado.css}">
+    <link rel="stylesheet" th:href="@{/css/reactivo.css}">
+    <script th:src="@{/js/rx-util.js}" defer></script>
+    <script th:src="@{/js/reactivo.js}" defer></script>
+</head>
+
+<body>
+
+<header class="encabezado">
+    <h1>Programación reactiva</h1>
+    <p>Demostración en el navegador con Reactor (Flux y Mono)</p>
+</header>
+
+<nav th:replace="~{fragments/componentes :: menu('reactivo')}"></nav>
+
+<main class="contenedor">
+
+    <p class="reactivo-intro">
+        Cada tarjeta ejecuta un ejemplo en el servidor y muestra aquí las señales que emite.
+        Los datos son de ejemplo (no usan la base de datos). Las mismas consultas están en
+        <code>/api/reactivo/...</code>.
+    </p>
+
+    <section class="reactivo-rejilla">
+
+        <!-- 1. Flux + filter + map -->
+        <article class="rx-tarjeta">
+            <h3>1. Flux + filter + map</h3>
+            <p>Emite las reservas una por una, conserva las activas y transforma cada una en un texto.</p>
+            <div class="rx-botones">
+                <button type="button" class="rx-btn" id="btn-flux">Ejecutar</button>
+                <button type="button" class="rx-btn rx-btn-sec" data-limpiar="salida-flux">Limpiar</button>
+            </div>
+            <ol class="rx-salida" id="salida-flux"></ol>
+        </article>
+
+        <!-- 2. Mono -->
+        <article class="rx-tarjeta">
+            <h3>2. Mono: conteo y consulta por id</h3>
+            <p>Un Mono emite como máximo un elemento: el total de reservas activas o una reserva concreta.</p>
+            <div class="rx-botones">
+                <button type="button" class="rx-btn" id="btn-total">Contar activas</button>
+                <input type="number" id="campo-id" value="2" min="1" aria-label="Id de la reserva">
+                <button type="button" class="rx-btn" id="btn-uno">Consultar id</button>
+                <button type="button" class="rx-btn rx-btn-sec" data-limpiar="salida-mono">Limpiar</button>
+            </div>
+            <p class="rx-ayuda">Pruebe un id que no exista (por ejemplo 99) para ver el Mono vacío / 404.</p>
+            <ol class="rx-salida" id="salida-mono"></ol>
+        </article>
+
+        <!-- 3. Flujo vacío -->
+        <article class="rx-tarjeta">
+            <h3>3. Flujo sin resultados</h3>
+            <p>Un filtro que no deja pasar nada: el flujo termina (onComplete) sin emitir ningún elemento.</p>
+            <div class="rx-botones">
+                <button type="button" class="rx-btn" id="btn-vacio">Ejecutar</button>
+                <button type="button" class="rx-btn rx-btn-sec" data-limpiar="salida-vacio">Limpiar</button>
+            </div>
+            <ol class="rx-salida" id="salida-vacio"></ol>
+        </article>
+
+        <!-- 4. Señales: onNext + onComplete -->
+        <article class="rx-tarjeta">
+            <h3>4. Señales onNext y onComplete</h3>
+            <p>El servidor emite una reserva cada 800 ms y el navegador las recibe en vivo (Server-Sent Events).</p>
+            <div class="rx-botones">
+                <button type="button" class="rx-btn" data-stream="normal" data-salida="salida-normal">Iniciar</button>
+                <button type="button" class="rx-btn rx-btn-aviso" data-cancelar="salida-normal">Cancelar</button>
+                <button type="button" class="rx-btn rx-btn-sec" data-limpiar="salida-normal">Limpiar</button>
+            </div>
+            <p class="rx-ayuda">Cancelar a mitad del flujo cierra la conexión y el servidor cancela la suscripción.</p>
+            <ol class="rx-salida" id="salida-normal"></ol>
+        </article>
+
+        <!-- 5. Señal onError -->
+        <article class="rx-tarjeta">
+            <h3>5. Señal onError</h3>
+            <p>El flujo emite dos reservas y luego falla. onComplete no se ejecuta cuando hay error.</p>
+            <div class="rx-botones">
+                <button type="button" class="rx-btn" data-stream="error" data-salida="salida-error">Iniciar</button>
+                <button type="button" class="rx-btn rx-btn-sec" data-limpiar="salida-error">Limpiar</button>
+            </div>
+            <ol class="rx-salida" id="salida-error"></ol>
+        </article>
+
+        <!-- 6. BaseSubscriber -->
+        <article class="rx-tarjeta">
+            <h3>6. BaseSubscriber: request(1) y cancel()</h3>
+            <p>El suscriptor pide un elemento por vez (control de demanda) y cancela tras recibir dos.</p>
+            <div class="rx-botones">
+                <button type="button" class="rx-btn" data-stream="demanda" data-salida="salida-demanda">Iniciar</button>
+                <button type="button" class="rx-btn rx-btn-sec" data-limpiar="salida-demanda">Limpiar</button>
+            </div>
+            <ol class="rx-salida" id="salida-demanda"></ol>
+        </article>
+
+    </section>
+
+    <p class="reactivo-pie">
+        <a th:href="@{/}">Volver al menú principal</a>
+    </p>
+
+</main>
+
+</body>
+
+</html>

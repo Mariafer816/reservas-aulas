@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo WebFlux | Sistema de Reservas</title>
+    <link rel="stylesheet" th:href="@{/css/mejoras.css}">
+    <link rel="stylesheet" th:href="@{/css/listado.css}">
+    <link rel="stylesheet" th:href="@{/css/reactivo.css}">
+    <script th:src="@{/js/rx-util.js}" defer></script>
+    <script th:src="@{/js/webflux.js}" defer></script>
+</head>
+
+<body>
+
+<header class="encabezado">
+    <h1>Módulo WebFlux</h1>
+    <p>Mono, streaming con SSE y consumo de servicios con WebClient</p>
+</header>
+
+<nav th:replace="~{fragments/componentes :: menu('webflux')}"></nav>
+
+<main class="contenedor">
+
+    <p class="reactivo-intro">
+        Cada tarjeta llama a una ruta de <code>/api/v1/reactive</code> y muestra la respuesta.
+        El CRUD y la API REST siguen funcionando igual que antes.
+    </p>
+
+    <section class="reactivo-rejilla">
+
+        <!-- 1. Mono -->
+        <article class="rx-tarjeta">
+            <h3>1. Mono: bienvenida al usuario</h3>
+            <p><code>GET /api/v1/reactive/bienvenida/{usuario}</code><br>
+                Devuelve un único resultado con el rol y la cantidad de reservas del usuario.</p>
+            <div class="rx-botones">
+                <input type="text" id="campo-usuario" value="carlos" maxlength="60" aria-label="Usuario">
+                <button type="button" class="rx-btn" id="btn-bienvenida">Consultar</button>
+                <button type="button" class="rx-btn rx-btn-sec" data-limpiar="salida-bienvenida">Limpiar</button>
+            </div>
+            <p class="rx-ayuda">Pruebe con un nombre o correo registrado (carlos, maria, ana) o con uno que no exista.</p>
+            <ol class="rx-salida" id="salida-bienvenida"></ol>
+        </article>
+
+        <!-- 2. SSE -->
+        <article class="rx-tarjeta">
+            <h3>2. Flux + SSE: monitor de reservas</h3>
+            <p><code>GET /api/v1/reactive/reservas/stream</code> (<code>text/event-stream</code>)<br>
+                Cada evento aparece apenas el servidor lo emite, uno por uno.</p>
+            <div class="rx-botones">
+                <label>Eventos <input type="number" id="campo-cantidad" value="6" min="5" max="20"></label>
+                <label>Intervalo (ms) <input type="number" id="campo-intervalo" value="1000" min="100" max="5000" step="100"></label>
+            </div>
+            <div class="rx-botones">
+                <button type="button" class="rx-btn" id="btn-stream">Iniciar</button>
+                <button type="button" class="rx-btn rx-btn-aviso" id="btn-cancelar">Cancelar</button>
+                <button type="button" class="rx-btn rx-btn-sec" data-limpiar="salida-stream">Limpiar</button>
+            </div>
+            <ol class="rx-salida" id="salida-stream"></ol>
+        </article>
+
+        <!-- 3. WebClient -->
+        <article class="rx-tarjeta">
+            <h3>3. WebClient: consulta de aulas</h3>
+            <p><code>GET /api/v1/reactive/aulas/consulta?fuente=...</code><br>
+                El servidor consulta otra ruta HTTP con WebClient (timeout de 2 s). Si falla, responde con datos de respaldo.</p>
+            <div class="rx-botones">
+                <select id="campo-fuente" aria-label="Fuente">
+                    <option value="real">real: /api/aulas del proyecto</option>
+                    <option value="simulada">simulada: respuesta correcta</option>
+                    <option value="lenta">lenta: provoca timeout</option>
+                    <option value="error">error: provoca HTTP 500</option>
+                    <option value="inexistente">inexistente: provoca HTTP 404</option>
+                </select>
+                <button type="button" class="rx-btn" id="btn-consulta">Consultar</button>
+                <button type="button" class="rx-btn rx-btn-sec" data-limpiar="salida-consulta">Limpiar</button>
+            </div>
+            <ol class="rx-salida" id="salida-consulta"></ol>
+        </article>
+
+    </section>
+
+    <p class="reactivo-pie">
+        <a th:href="@{/}">Volver al menú principal</a>
+    </p>
+
+</main>
+
+</body>
+
+</html>
